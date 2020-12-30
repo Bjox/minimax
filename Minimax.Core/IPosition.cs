@@ -6,6 +6,7 @@ namespace Minimax.Core
     {
         bool GameOver { get; }
         double Evaluate();
+        void Init();
         IEnumerable<IPosition> GenerateChildPositions();
     }
 }

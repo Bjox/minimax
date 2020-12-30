@@ -13,36 +13,37 @@ namespace Minimax.Core.Test.Unit
         {
             /*
                       3             (max)
-                 3          X       (min)
-              3    5     4    X     (max)
+                 3         -4       (min)
+              3    5    -4    X     (max)
             -1 3  5 X  -6-4  X X    (min)
             */
+            var bestPosition = new MockPosition()
+            {
+                Children = new List<MockPosition>()
+                    {
+                        new MockPosition()
+                        {
+                            Children = new List<MockPosition>()
+                            {
+                                new MockPosition(-1),
+                                new MockPosition(3)
+                            }
+                        },
+                        new MockPosition()
+                        {
+                            Children = new List<MockPosition>()
+                            {
+                                new MockPosition(5),
+                                new MockPosition(shouldBePruned: true)
+                            }
+                        }
+                    }
+            };
             var position = new MockPosition()
             {
                 Children = new List<MockPosition>()
                 {
-                    new MockPosition()
-                    {
-                        Children = new List<MockPosition>()
-                        {
-                            new MockPosition()
-                            {
-                                Children = new List<MockPosition>()
-                                {
-                                    new MockPosition(-1),
-                                    new MockPosition(3)
-                                }
-                            },
-                            new MockPosition()
-                            {
-                                Children = new List<MockPosition>()
-                                {
-                                    new MockPosition(5),
-                                    new MockPosition(shouldBePruned: true)
-                                }
-                            }
-                        }
-                    },
+                    bestPosition,
                     new MockPosition()
                     {
                         Children = new List<MockPosition>()
@@ -55,7 +56,7 @@ namespace Minimax.Core.Test.Unit
                                     new MockPosition(-4)
                                 }
                             },
-                            new MockPosition(shouldBePruned: true)
+                            new MockPosition()
                             {
                                 Children = new List<MockPosition>()
                                 {
@@ -67,7 +68,9 @@ namespace Minimax.Core.Test.Unit
                     }
                 }
             };
-            Minimax.MinimaxAlphaBeta(position, 3, double.NegativeInfinity, double.PositiveInfinity, true).Should().Be(3);
+            var result = Minimax.MinimaxAlphaBeta(position, 3, Minimax.Target.Maximize);
+            result.Value.Should().Be(3);
+            result.SelectedPosition.Should().BeSameAs(bestPosition);
         }
 
         class MockPosition : IPosition
@@ -99,6 +102,10 @@ namespace Minimax.Core.Test.Unit
             public IEnumerable<IPosition> GenerateChildPositions()
             {
                 return Children;
+            }
+
+            public void Init()
+            {
             }
         }
     }
