@@ -1,0 +1,1 @@
+order potential moves from best to worst for the current player. will increase pruning
